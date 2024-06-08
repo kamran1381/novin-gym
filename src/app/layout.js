@@ -2,7 +2,7 @@ import React from 'react'
 import localFont from 'next/font/local'
 import { Suspense } from 'react';
 import "./globals.css";
-
+import Navbar from './layouts/navbar';
 // import { Toaster } from 'sonner'
 // import { SessionProvider } from 'next-auth/react';
 
@@ -21,6 +21,7 @@ export default function RootLayout({ children }) {
     <html lang="fa" dir="rtl">
       <body className={SansWeb.className}>
         <Suspense>
+          <Navbar/>
               {children}
         </Suspense>
         {/* <Toaster duration={5000} position='top-center' className={`${SansWeb.className} text-center flex justify-center items-center text-sm font-bold `} /> */}

@@ -1,13 +1,9 @@
 import React from 'react';
-import Navbar from '@/components/navbar/navbar';
 import Image from 'next/image';
 
 function Sectionone() {
     return (
         <>
-            <div className='relative'>
-                <Navbar />
-            </div>
             <header className="relative h-screen">
                 <Image
                     src="/assets/header image/gorilla-freak-wt5jg8_WrJg-unsplash.jpg"
