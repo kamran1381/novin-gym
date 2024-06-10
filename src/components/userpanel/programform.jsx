@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
 import Next from '../icons/next';
-
+//  program
 function Programform() {
   const [progress, setProgress] = useState(0);
   const inputRefs = useRef([]);
@@ -40,14 +40,7 @@ function Programform() {
             <input ref={el => inputRefs.current[0] = el} type="text" className="mb-10 bg-transparent border border-[#E60000] py-1" />
             <label className='pb-2'>شماره تلفن </label>
             <input ref={el => inputRefs.current[1] = el} type="text" className="mb-10 bg-transparent border border-[#E60000] py-1" />
-            <label className='pb-2'>نوع برنامه را بنویسید</label>
-            <select ref={el => selectRefs.current[0] = el} className="mb-10 bg-transparent border border-[#E60000] py-1">
-              <option value="">انتخاب کنید</option>
-              <option value="football">فوتبال</option>
-              <option value="basketball">بسکتبال</option>
-              <option value="swimming">شنا</option>
-              <option value="running">دویدن</option>
-            </select>
+          
           </div>
           <div className="w-full md:w-1/5 lg:px-8 flex flex-col">
             <label className='pb-2'>سن ورزشکار</label>
@@ -66,14 +59,9 @@ function Programform() {
             <input ref={el => inputRefs.current[7] = el} type="text" className="mb-10 bg-transparent border border-[#E60000] py-1" />
           </div>
           <div className="w-full md:w-1/5 flex flex-col">
-            <label className='pb-2'>انتخاب ورزش</label>
-            <select ref={el => selectRefs.current[1] = el} className="mb-10 bg-transparent border border-[#E60000] py-1">
-              <option value="">انتخاب کنید</option>
-              <option value="football">فوتبال</option>
-              <option value="basketball">بسکتبال</option>
-              <option value="swimming">شنا</option>
-              <option value="running">دویدن</option>
-            </select>
+            <label className='pb-2'>تعداد جلسات</label>
+            <input ref={el => inputRefs.current[7] = el} type="text" className="mb-10 bg-transparent border border-[#E60000] py-1" />
+
           </div>
         </div>
         <button className="bg-[#E60000] text-white font-bold py-2 px-4 rounded-full flex items-center gap-2">

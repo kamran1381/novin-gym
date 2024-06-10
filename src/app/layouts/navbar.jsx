@@ -29,19 +29,19 @@ const Navbar = () => {
           {/* Centered navigation links */}
           <div className="hidden md:flex space-x-4 absolute left-1/2 transform -translate-x-1/2">
             <Link href='/' className='hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium'>خانه</Link>
-            <Link href='/profile' className='hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium'>پروفایل </Link>
+            <Link href='/userpanel/account' className='hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium'>پروفایل </Link>
             <Link href='/about' className='hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium'>درباره ما </Link>
             <Link href='/contact' className='hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium'>سوالی دارید</Link>
           </div>
 
           {/* Buttons and Burger Menu Icon */}
           <div className="flex items-center gap-2">
-            <button className="bg-[#E60000] text-white font-bold py-2 px-7 rounded-3xl hidden md:block">
+            <Link href='/login' className="bg-[#E60000] text-white font-bold py-2 px-7 rounded-3xl hidden md:block">
               ثبت نام
-            </button>
-            <button className="bg-transparent text-white font-bold py-2 px-8 rounded-3xl hidden md:block border-2 border-[#E60000]">
+            </Link>
+            <Link href='/login' className="bg-transparent text-white font-bold py-2 px-8 rounded-3xl hidden md:block border-2 border-[#E60000]">
               ورود
-            </button>
+            </Link>
             <button className="md:hidden text-white" onClick={toggleMenu}>
               {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
@@ -53,15 +53,15 @@ const Navbar = () => {
       {menuOpen && (
         <div className="md:hidden bg-[#0C0C0C] text-white px-4 pt-4 pb-2 space-y-1">
           <Link href="/" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>خانه</Link>
-          <Link href="/profile" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>پروفایل</Link>
+          <Link href="/userpanel/account" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>پروفایل</Link>
           <Link href="/about" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>درباره ما</Link>
           <Link href="/contact" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>سوالی دارید</Link>
-          <button className="w-full bg-[#E60000] text-white font-bold py-2 px-4 rounded mt-2">
+          <Link href='/login' className="w-full bg-[#E60000] text-white font-bold py-2 px-4 rounded mt-2">
             ثبت نام
-          </button>
-          <button className="w-full bg-transparent border-2 border-[#E60000] text-white font-bold py-2 px-4 rounded mt-2">
+          </Link>
+          <Link href='/login' className="w-full bg-transparent border-2 border-[#E60000] text-white font-bold py-2 px-4 rounded mt-2">
             ورود
-          </button>
+          </Link>
         </div>
       )}
     </nav>

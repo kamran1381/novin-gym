@@ -1,6 +1,7 @@
 import React from 'react'
 import { TiDelete } from "react-icons/ti";
 function Programtable() {
+    //  modal baraye moshahdede barname va download
     return (
         <div className="mx-auto overflow-x-auto shadow-md sm:rounded-lg">
             <span className='text-[#F9F9F9] text-sm'>اعمال فیلتر</span>
@@ -23,7 +24,8 @@ function Programtable() {
                                 <TiDelete size={27} />
                             </button>
                             <button class="bg-[#E60000] text-white font-bold py-2 px-4   rounded mx-2">
-                                Button
+                            مشاهده برنامه 
+
                             </button>
 
                         </td>
@@ -37,7 +39,8 @@ function Programtable() {
                                 <TiDelete size={27} />
                             </button>
                             <button class="bg-[#E60000] text-white font-bold py-2 px-4   rounded mx-2">
-                                Button
+                            مشاهده برنامه 
+
                             </button>
                         </td>
                     </tr>
@@ -50,7 +53,7 @@ function Programtable() {
                                 <TiDelete size={27} />
                             </button>
                             <button class="bg-[#E60000] text-white font-bold py-2 px-4   rounded mx-2">
-                                Button
+                              مشاهده برنامه 
                             </button>
                         </td>
                     </tr>
