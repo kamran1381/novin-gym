@@ -19,7 +19,7 @@ const API_URL = process.env.NEXT_PUBLIC_AXIOS_API_URL;
 // );
 
 const axiosapi = axios.create({
-  baseURL: API_URL 
+  baseURL: API_URL ,
 });
 
 export default axiosapi;

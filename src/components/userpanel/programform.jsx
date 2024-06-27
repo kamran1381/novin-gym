@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import axiosapi from '@/app/lib/axios';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 function Programform() {
   const [progress, setProgress] = useState(0);
+  const router = useRouter();
   const [formData, setFormData] = useState({
     username: '',
     phoneNumber: '',
@@ -18,8 +20,7 @@ function Programform() {
   });
 
   const [errors, setErrors] = useState({});
-
-  const session = useSession();
+  const { data: session } = useSession();
 
   useEffect(() => {
     const filledInputs = Object.values(formData).filter(value => value).length;
@@ -34,52 +35,36 @@ function Programform() {
     }));
   };
 
-  const validateInputs = () => {
-    const newErrors = {};
-    Object.keys(formData).forEach(key => {
-      if (!formData[key]) {
-        newErrors[key] = 'This field is required';
-      } else if (key === 'phoneNumber' && !/^\d+$/.test(formData[key])) {
-        newErrors[key] = 'Phone number must be numeric';
-      } else if ((key === 'age' || key === 'height' || key === 'weight' || key === 'armCircumference' || key === 'waistCircumference' || key === 'thighCircumference' || key === 'sessionCount') && isNaN(formData[key])) {
-        newErrors[key] = 'This field must be a number';
-      }
-    });
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = async () => {
-    if (!validateInputs()) return;
-
-    const athleteDetails = {
-      username: formData.username,
-      phone: formData.phoneNumber,
-      age: formData.age,
-      height: formData.height,
-      weight: formData.weight,
-      armCircumference: formData.armCircumference,
-      waistCircumference: formData.waistCircumference,
-      thighCircumference: formData.thighCircumference,
-      sessionCount: formData.sessionCount,
-
-    };
-
     const dataToSend = {
-      athleteDetails,
+      username: formData.username,
+      data: {
+        name : formData.username ,
+        phoneNumber: formData.phoneNumber,
+        age: formData.age,
+        height: formData.height,
+        weight: formData.weight,
+        armCircumference: formData.armCircumference,
+        waistCircumference: formData.waistCircumference,
+        thighCircumference: formData.thighCircumference,
+        sessionCount: formData.sessionCount,
+        // Add any additional data as required
+      }
     };
 
     try {
-      let token = session?.data?.user?.token;
+      const token = session?.user?.token;
       const response = await axiosapi.post('/programs', dataToSend, {
         headers: {
-          "Authorization": `Bearer ${token}` ,
-          'Accept' : 'application/json'
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": 'application/json',
+          "Accept": 'application/json',
         }
       });
-      console.log('data sent:', response.data);
+      console.log('data sent:', response.config.data);
+      router.push('/userpanel/program');
     } catch (error) {
-      console.error('Error:', error.response);
+      console.error('Error:', error.response?.data || error.message);
     }
   };
 
@@ -93,21 +78,20 @@ function Programform() {
           </div>
           <span className='text-white'>{Math.round(progress)}%</span>
         </div>
-
         <p className="mb-9 text-lg font-medium text-white mt-7">مشخصات را کامل نمایید</p>
         <div className="flex flex-col md:flex-row md:justify-between gap-10 text-white">
           <div className="w-full md:w-2/5 flex flex-col">
             <label className='pb-2 lg:text-sm'>اسم ورزشکار</label>
-            <input 
+            <input
               name="username"
               type="text"
-              value={formData.athleteName}
+              value={formData.username}
               onChange={handleInputChange}
               className="mb-10 bg-transparent border border-[#E60000] py-1"
             />
-            {errors.athleteName && <span className="text-red-500">{errors.athleteName}</span>}
+            {errors.username && <span className="text-red-500">{errors.username}</span>}
             <label className='pb-2'>شماره تلفن </label>
-            <input 
+            <input
               name="phoneNumber"
               type="text"
               value={formData.phoneNumber}
@@ -118,7 +102,7 @@ function Programform() {
           </div>
           <div className="w-full md:w-1/5 lg:px-8 flex flex-col">
             <label className='pb-2'>سن ورزشکار</label>
-            <input 
+            <input
               name="age"
               type="text"
               value={formData.age}
@@ -127,7 +111,7 @@ function Programform() {
             />
             {errors.age && <span className="text-red-500">{errors.age}</span>}
             <label className='pb-2'>قد ورزشکار (cm)</label>
-            <input 
+            <input
               name="height"
               type="text"
               value={formData.height}
@@ -135,8 +119,8 @@ function Programform() {
               className="mb-10 bg-transparent border border-[#E60000] py-1"
             />
             {errors.height && <span className="text-red-500">{errors.height}</span>}
-            <label className='pb-2'>ورزن ورزشکار (cm)</label>
-            <input 
+            <label className='pb-2'>ورزن ورزشکار (kg)</label>
+            <input
               name="weight"
               type="text"
               value={formData.weight}
@@ -147,7 +131,7 @@ function Programform() {
           </div>
           <div className="w-full md:w-1/5 lg:px-8 flex flex-col">
             <label className='pb-2'>دور بازو</label>
-            <input 
+            <input
               name="armCircumference"
               type="text"
               value={formData.armCircumference}
@@ -156,7 +140,7 @@ function Programform() {
             />
             {errors.armCircumference && <span className="text-red-500">{errors.armCircumference}</span>}
             <label className='pb-2'>دور شکم</label>
-            <input 
+            <input
               name="waistCircumference"
               type="text"
               value={formData.waistCircumference}
@@ -165,7 +149,7 @@ function Programform() {
             />
             {errors.waistCircumference && <span className="text-red-500">{errors.waistCircumference}</span>}
             <label className='pb-2'>دور ران</label>
-            <input 
+            <input
               name="thighCircumference"
               type="text"
               value={formData.thighCircumference}
@@ -176,7 +160,7 @@ function Programform() {
           </div>
           <div className="w-full md:w-1/5 flex flex-col">
             <label className='pb-2'>تعداد جلسات</label>
-            <input 
+            <input
               name="sessionCount"
               type="text"
               value={formData.sessionCount}
@@ -186,7 +170,7 @@ function Programform() {
             {errors.sessionCount && <span className="text-red-500">{errors.sessionCount}</span>}
           </div>
         </div>
-        <button 
+        <button
           onClick={handleSubmit}
           className="bg-[#E60000] text-white font-bold py-2 px-4 rounded-full flex items-center gap-2"
         >

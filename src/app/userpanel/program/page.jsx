@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Programtable from '@/components/userpanel/programtable'
 function Program() {
     return (
-        <div className='bg-[#000000] h-screen '>
+        <div className='bg-[#000000] min-h-screen  '>
             <div className='flex flex-col items-center'>
                 <div className='flex mt-10 gap-8'>
                     <form method="GET" action="">
