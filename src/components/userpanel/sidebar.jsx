@@ -1,5 +1,4 @@
-'use client';
-
+'use client'
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -17,7 +16,7 @@ const Sidebar = () => {
     };
 
     return (
-        <div className='w-full flex flex-col items-center mx-10 mt-14'>
+        <div className='w-full flex flex-col items-center mx-10 mt-14 lg:w-60 lg:items-start'>
             <div className='w-full'>
                 <div className='flex items-center gap-4 border-b border-gray-200 pb-4 w-full justify-center'>
                     <div className='w-20 h-20 relative'>
@@ -29,13 +28,13 @@ const Sidebar = () => {
                         />
                     </div>
                     <div className='flex-2'>
-                        <span className='text-white text-lg'> محمد رضا صادقی</span>
+                        <span className='text-white text-lg'>محمد رضا صادقی</span>
                         <Pencil />
                     </div>
                 </div>
             </div>
             {/* Sidebar links */}
-            <div className='w-full flex flex-col items-center space-y-10 mt-8 text-base'>
+            <div className='w-full flex flex-col items-center space-y-10 mt-8 text-base lg:text-sm'>
                 <Link href='newprogram' className={`${path === '/userpanel/newprogram' ? 'text-red-500' : 'text-white'}`}>
                     ساخت برنامه جدید
                 </Link>
@@ -45,9 +44,9 @@ const Sidebar = () => {
                 <Link href='newexcersice' className={`${path === 'userpanel/newexcersice' ? 'text-red-500' : 'text-white'}`}>
                     اضافه کردن حرکت جدید
                 </Link>
-                {/* <Link href='/userpanel/' className={`${path === '' ? 'text-red-500' : 'text-white'}`}>
+                <Link href='mussle' className={`${path === 'userpanel/mussle' ? 'text-red-500' : 'text-white'}`}>
                     اضافه کردن عضله جدید
-                </Link> */}
+                </Link>
                 <button onClick={handleSignOut} className='text-white'>
                     خروج از حساب
                 </button>

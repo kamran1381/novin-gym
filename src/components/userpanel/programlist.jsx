@@ -1,26 +1,44 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axiosapi from '@/app/lib/axios';
+import { useSession } from 'next-auth/react';
 
 function Programlist({ onSelect }) {
-  const [activeItem, setActiveItem] = useState('سینه');
+  const [items, setItems] = useState([]);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        let token = session?.user?.token;
+        const response = await axiosapi.get('/categories', {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Accept": 'application/json',
+          }
+        });
+
+        if (response.status === 200) {
+          setItems(response.data);
+          console.log(items)
+        }
+      } catch (error) {
+        console.error('Error fetching items:', error);
+      }
+    };
+
+    if (session) {
+      fetchCategories();
+    }
+  }, [session]);
 
   const handleItemClick = (item) => {
-    setActiveItem(item);
-    onSelect(item);
+    onSelect(item); // Pass the whole item object
+    console.log(item)
   };
 
-  const items = [
-    'سینه',
-    'کول',
-    'جلو بازو',
-    'زیربغل',
-    'ساعد',
-    'پشت بازو',
-    'سر شانه',
-  ];
-
   return (
-    <nav className="bg-transparant mt-10">
+    <nav className="bg-transparent mt-10">
       <div className="">
         <button
           data-collapse-toggle="navbar-default"
@@ -49,14 +67,13 @@ function Programlist({ onSelect }) {
         <div className="w-full md:w-auto" id="navbar-default">
           <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 justify-center w-full">
             {items.map((item) => (
-              <li key={item} className="flex-1 text-center text-white">
-                <a
-                  href="#"
-                  className={`block py-2 px-3 ${activeItem === item ? 'underline' : ''}`}
+              <li key={item.id} className="flex-1 text-center text-white">
+                <button
+                  className="block py-2 px-3"
                   onClick={() => handleItemClick(item)}
                 >
-                  {item}
-                </a>
+                  {item.name}
+                </button>
               </li>
             ))}
           </ul>

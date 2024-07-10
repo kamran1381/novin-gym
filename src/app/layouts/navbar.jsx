@@ -22,15 +22,14 @@ const Navbar = () => {
               alt='Logo'
               width={150}
               height={150}
-              
             />
           </div>
 
           {/* Centered navigation links */}
-          <div className="hidden md:flex space-x-4 absolute left-1/2 transform -translate-x-1/2">
+          <div className="hidden md:flex space-x-4">
             <Link href='/' className='hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium'>خانه</Link>
-            <Link href='/userpanel/account' className='hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium'>پروفایل </Link>
-            <Link href='/about' className='hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium'>درباره ما </Link>
+            <Link href='/userpanel/account' className='hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium'>پروفایل</Link>
+            <Link href='/about' className='hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium'>درباره ما</Link>
             <Link href='/contact' className='hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium'>سوالی دارید</Link>
           </div>
 
@@ -51,17 +50,19 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-[#0C0C0C] text-white px-4 pt-4 pb-2 space-y-1">
-          <Link href="/" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>خانه</Link>
-          <Link href="/userpanel/account" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>پروفایل</Link>
-          <Link href="/about" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>درباره ما</Link>
-          <Link href="/contact" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>سوالی دارید</Link>
-          <Link href='/login' className="w-full bg-[#E60000] text-white font-bold py-2 px-4 rounded mt-2">
-            ثبت نام
-          </Link>
-          <Link href='/login' className="w-full bg-transparent border-2 border-[#E60000] text-white font-bold py-2 px-4 rounded mt-2">
-            ورود
-          </Link>
+        <div className="md:hidden bg-[#0C0C0C] text-white px-4 pt-4 pb-2">
+          <div className="flex flex-col space-y-2">
+            <Link href="/" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>خانه</Link>
+            <Link href="/userpanel/account" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>پروفایل</Link>
+            <Link href="/about" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>درباره ما</Link>
+            <Link href="/contact" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>سوالی دارید</Link>
+            <Link href='/login' className="w-full bg-[#E60000] text-white font-bold py-2 px-4 rounded">
+              ثبت نام
+            </Link>
+            <Link href='/login' className="w-full bg-transparent border-2 border-[#E60000] text-white font-bold py-2 px-4 rounded">
+              ورود
+            </Link>
+          </div>
         </div>
       )}
     </nav>

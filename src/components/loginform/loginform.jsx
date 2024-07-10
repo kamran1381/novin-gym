@@ -14,23 +14,31 @@ function Loginform() {
     const [errorMessage, setErrorMessage] = useState('');
     const handleLogin = async (e) => {
         e.preventDefault();
-
+    
+        // console.time('Login Process');
         try {
+            // console.time('signIn');
             const result = await signIn('credentials', {
                 ...formData,
-                redirect: false ,
-                callbackUrl : '/'
+                redirect: false,
+                callbackUrl: '/'
             });
+            // console.timeEnd('signIn');
+    
             if (result?.error) {
                 setErrorMessage('Invalid username or password.');
-            } else {                
+            } else {
+                console.time('Router Push');
                 router.push('/userpanel/account');
+                console.timeEnd('Router Push');
             }
         } catch (error) {
             console.error(error);
             setErrorMessage('An unexpected error occurred');
         }
+        console.timeEnd('Login Process');
     };
+    
 
     return (
         <div className="flex justify-center items-center min-h-screen">

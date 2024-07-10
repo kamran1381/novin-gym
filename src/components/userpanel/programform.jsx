@@ -20,7 +20,6 @@ function Programform() {
   });
 
   const [errors, setErrors] = useState({});
-  const { data: session } = useSession();
 
   useEffect(() => {
     const filledInputs = Object.values(formData).filter(value => value).length;
@@ -36,36 +35,12 @@ function Programform() {
   };
 
   const handleSubmit = async () => {
-    const dataToSend = {
-      username: formData.username,
-      data: {
-        name : formData.username ,
-        phoneNumber: formData.phoneNumber,
-        age: formData.age,
-        height: formData.height,
-        weight: formData.weight,
-        armCircumference: formData.armCircumference,
-        waistCircumference: formData.waistCircumference,
-        thighCircumference: formData.thighCircumference,
-        sessionCount: formData.sessionCount,
-        // Add any additional data as required
-      }
-    };
+   
+    const LocalStorageformData = JSON.stringify(formData)
+    localStorage.setItem('LocalStorageformData', LocalStorageformData);
+    alert('برای ادامه ساخت برنامه به صفحه دیگری انتقال داده خواهید شد ')
+   router.push('/userpanel/programbuild')
 
-    try {
-      const token = session?.user?.token;
-      const response = await axiosapi.post('/programs', dataToSend, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": 'application/json',
-          "Accept": 'application/json',
-        }
-      });
-      console.log('data sent:', response.config.data);
-      router.push('/userpanel/program');
-    } catch (error) {
-      console.error('Error:', error.response?.data || error.message);
-    }
   };
 
   return (

@@ -1,47 +1,144 @@
-'use client'
-import React, { useState } from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
+import axiosapi from '@/app/lib/axios';
 import Programlist from '@/components/userpanel/programlist';
+import { useSession } from 'next-auth/react';
+import { FaPlus } from 'react-icons/fa';
 
 function Programbuild() {
-  const [selectedProgram, setSelectedProgram] = useState('سینه');
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [inputVisible, setInputVisible] = useState(null);
+  const [selectedExercise, setSelectedExercise] = useState(null);
+  const [inputValues, setInputValues] = useState([]);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        let token = session?.user?.token;
+        const response = await axiosapi.get('/categories', {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Accept": 'application/json',
+          }
+        });
+
+        if (response.status === 200) {
+          setCategories(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    const fetchPrograms = async () => {
+      try {
+        let token = session?.user?.token;
+        const response = await axiosapi.get('/programs', {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Accept": 'application/json',
+          }
+        });
+
+        if (response.status === 200) {
+          setPrograms(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching programs:', error);
+      }
+    };
+
+    if (session) {
+      fetchCategories();
+      fetchPrograms();
+    }
+  }, [session]);
+
+  const handlePlusClick = (exerciseId) => {
+    setInputVisible(inputVisible === exerciseId ? null : exerciseId);
+    setSelectedExercise(inputVisible === exerciseId ? null : exerciseId);
+  };
+
+  const handleSubmit = async () => {
+    const formDataJSON = localStorage.getItem('LocalStorageformData');
+    const formDataToSend = JSON.parse(formDataJSON);
+
+    const dataToSend = {
+      username: formDataToSend.username,
+      data: {
+        ...formDataToSend,
+        sets: inputValues
+      }
+    };
+
+    console.log(dataToSend);
+
+    // Add your axios post request here to send dataToSend to your server
+    try {
+      let token = session?.user?.token;
+      const response = await axiosapi.post('/programs', dataToSend, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (response.status === 200) {
+        console.log('Data sent successfully');
+      } else {
+        console.error('Failed to send data:', response);
+      }
+    } catch (error) {
+      console.error('Error sending data:', error);
+    }
+  };
+
+  const handleInputChange = (index, exerciseName, value) => {
+    setInputValues(prevValues => {
+      const updatedValues = [...prevValues];
+      updatedValues[index] = { exerciseName, sets: value };
+      return updatedValues;
+    });
+  };
 
   const renderContent = () => {
-    switch (selectedProgram) {
-      case 'سینه':
-        return (
-          <div className="flex items-center gap-3">
-          
-          </div>
-        );
-      case 'کول':
-        return <div className="text-white">Content for کول</div>;
-      case 'جلو بازو':
-        return <div className="text-white">Content for جلو بازو</div>;
-      case 'زیربغل':
-        return <div className="text-white">Content for زیربغل</div>;
-      case 'ساعد':
-        return <div className="text-white">Content for ساعد</div>;
-      case 'پشت بازو':
-        return <div className="text-white">
-           <div className="flex items-center gap-3">
-            <span className="bg-white text-black px-5 py-3">18 * 3</span>
-            <ul className="text-white flex flex-col ">
-              <li>+پشت بازو طناب پشت سر خم </li>
-              <li>+ پشت بازو میله 7 پشت سر خم</li>
-              <li>+ پشت بازو میله 7 پشت سر خم</li>
-              <li>+ پشت بازو سیم کش پشت سر روی زانو دست روی روی میز</li>
-              <li>+ پشت بازو جفت دمبل پشت سر نشسته</li>
-              <li>+ پشت بازو سیم کش تک دست چکشی مورب</li>
-              <li>پشت بازو هالتر دست برعکس خوابیده</li>
-              <li>پشت بازو کیک بک دمبل خوابیده</li>
-            </ul>
-          </div>
-        </div>;
-      case 'سر شانه':
-        return <div className="text-white">Content for سر شانه</div>;
-      default:
-        return <div className="text-white">Select a program</div>;
-    }
+    if (!selectedCategory) return null;
+
+    const category = categories.find(cat => cat.id === selectedCategory.id);
+
+    if (!category) return null;
+
+    return (
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
+          <ul className="text-white flex flex-col">
+            {category.exercises.map((exercise, index) => (
+              <li key={exercise.id} className="flex flex-col gap-2 relative">
+                <div className="flex items-center gap-2">
+                  <span className='text-lg'>{exercise.name}</span>
+                  <FaPlus
+                    className={`cursor-pointer ml-1 ${selectedExercise === exercise.id ? 'text-[#E60000]' : 'text-white'}`}
+                    onClick={() => handlePlusClick(exercise.id)}
+                    size={17}
+                  />
+                </div>
+                {inputVisible === exercise.id && (
+                  <input
+                    type="text"
+                    className="bg-white text-black w-28 h-7 text-center rounded mt-2"
+                    placeholder="تعداد ست"
+                    onChange={(e) => handleInputChange(index, exercise.name, e.target.value)}
+                  />
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -52,20 +149,27 @@ function Programbuild() {
         <span className="text-white text-sm pt-3">حرکات جلسه اول را انتخاب کنید</span>
       </div>
       <div className="mx-10">
-        <Programlist onSelect={setSelectedProgram} />
+        <Programlist onSelect={setSelectedCategory} />
       </div>
       <div className="mt-10 px-10 w-4/5">
         <div className="flex justify-end">
           {renderContent()}
         </div>
       </div>
-
-      <div className='mt-10'>
-      <div className="flex flex-col items-center pt-8">
-        <span className="text-[#E60000] py-6 px-3 text-lg">جلسه دوم</span>
-        <div className="border-b-2 border-gray-200 w-96"></div>
-        <span className="text-white text-sm pt-3">حرکات جلسه اول را انتخاب کنید</span>
+      <div className='flex justify-center mt-6'>
+        <button
+          className="bg-red-800 text-white font-bold py-2 px-6 rounded"
+          onClick={handleSubmit}
+        >
+          ارسال
+        </button>
       </div>
+      <div className="mt-10">
+        <div className="flex flex-col items-center pt-8">
+          <span className="text-[#E60000] py-6 px-3 text-lg">جلسه دوم</span>
+          <div className="border-b-2 border-gray-200 w-96"></div>
+          <span className="text-white text-sm pt-3">حرکات جلسه دوم را انتخاب کنید</span>
+        </div>
       </div>
     </div>
   );
