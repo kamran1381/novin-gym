@@ -1,5 +1,5 @@
-'use client'
-import React from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import jsPDF from 'jspdf';
 import axiosapi from '@/app/lib/axios';
@@ -8,41 +8,59 @@ import ComponentToPrint from '../componenttoprint/componenttoprint';
 
 function DownloadButton({ programId }) {
     const { data: session } = useSession();
+    const [program, setProgram] = useState(null);
     const componentRef = React.useRef(null);
 
-    const handleDownload = async () => {
-        try {
-            const token = session?.user?.token;
+    useEffect(() => {
+        const fetchProgram = async () => {
+            try {
+                const token = session?.user?.token;
 
-            if (!token) {
-                console.error("No token found");
-                return;
-            }
-
-            const response = await axiosapi.get(`/programs/${programId}`, {
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Accept": 'application/json',
+                if (!token) {
+                    console.error("No token found");
+                    return;
                 }
-            });
 
-            console.log(response)
+                const response = await axiosapi.get(`/programs/${programId}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Accept": 'application/json',
+                    }
+                });
 
-            if (response.status === 200) {
-                const programDetails = response.data;
-
-                const doc = new jsPDF();
-                doc.text(JSON.stringify(programDetails, null, 2), 10, 10);
-                doc.save(`program_${programId}.pdf`);
-                console.log('Downloaded');
-
-            } else {
-                console.error(`Failed to fetch details for program ID: ${programId}`);
+                if (response.status === 200) {
+                    setProgram(response.data);
+                } else {
+                    console.error(`Failed to fetch details for program ID: ${programId}`);
+                }
+            } catch (error) {
+                console.error(error);
             }
-        } catch (error) {
-            console.error(error);
+        };
+
+        fetchProgram();
+    }, [session, programId]);
+
+    const handleDownload = () => {
+        if (program) {
+            const doc = new jsPDF();
+    
+           
+            doc.addFont('SansWeb-normal');
+       
+    
+            // Render the text in Farsi
+            doc.text('جزئیات برنامه', 10, 10);
+            doc.text(`نام کاربری: ${program.name}`, 10, 20);
+            doc.text(`وزن: ${program.weight}`, 10, 30);
+    
+            doc.save(`program_${programId}.pdf`);
+            console.log('Downloaded');
+        } else {
+            console.error('No program details to download');
         }
     };
+    
 
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,
@@ -57,7 +75,7 @@ function DownloadButton({ programId }) {
                 چاپ برنامه
             </button>
             <div style={{ display: 'none' }}>
-                <ComponentToPrint ref={componentRef} programId={programId} />
+                <ComponentToPrint ref={componentRef} program={program} />
             </div>
         </div>
     );
