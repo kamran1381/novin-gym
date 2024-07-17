@@ -30,7 +30,7 @@ function Programlist({ onSelect }) {
     if (session) {
       fetchCategories();
     }
-  }, [session]);
+  }, [session , items]);
 
   const handleItemClick = (item) => {
     onSelect(item); // Pass the whole item object

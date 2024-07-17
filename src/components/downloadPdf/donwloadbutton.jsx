@@ -4,7 +4,6 @@ import { useSession } from 'next-auth/react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import axiosapi from '@/app/lib/axios';
-import ComponentToPrint from '../componenttoprint/componenttoprint';
 import { BASE64_FONTsanNum } from '../base64/sanNum64';
 import { BASE64_FONTsanWeb } from '../base64/sansWeb64';
 
