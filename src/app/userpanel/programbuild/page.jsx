@@ -12,9 +12,21 @@ function Programbuild() {
   const [inputVisible, setInputVisible] = useState(null);
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [inputValues, setInputValues] = useState([]);
+  const [sessionCount, setSessionCount] = useState(null);
   const { data: session } = useSession();
 
   useEffect(() => {
+    // Fetch sessionCount from localStorage
+    const fetchSessionCount = () => {
+      const formDataJSON = localStorage.getItem('LocalStorageformData');
+      if (formDataJSON) {
+        const formData = JSON.parse(formDataJSON);
+        setSessionCount(formData.sessionCount);
+      }
+    };
+
+    fetchSessionCount();
+
     const fetchCategories = async () => {
       try {
         let token = session?.user?.token;
@@ -144,9 +156,9 @@ function Programbuild() {
   return (
     <div className="bg-[#000000] h-screen">
       <div className="flex flex-col items-center pt-8">
-        <span className="text-[#E60000] py-6 px-3 text-lg">جلسه اول</span>
+        <span className="text-[#E60000] py-6 px-3 text-lg">جلسه {sessionCount}</span>
         <div className="border-b-2 border-gray-200 w-96"></div>
-        <span className="text-white text-sm pt-3">حرکات جلسه اول را انتخاب کنید</span>
+        <span className="text-white text-sm pt-3">حرکات جلسه {sessionCount} را انتخاب کنید</span>
       </div>
       <div className="mx-10">
         <Programlist onSelect={setSelectedCategory} />
@@ -163,13 +175,6 @@ function Programbuild() {
         >
           ارسال
         </button>
-      </div>
-      <div className="mt-10">
-        <div className="flex flex-col items-center pt-8">
-          <span className="text-[#E60000] py-6 px-3 text-lg">جلسه دوم</span>
-          <div className="border-b-2 border-gray-200 w-96"></div>
-          <span className="text-white text-sm pt-3">حرکات جلسه دوم را انتخاب کنید</span>
-        </div>
       </div>
     </div>
   );
