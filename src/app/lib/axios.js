@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = process.env.NEXTAUTH_AXIOS_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_AXIOS_URL;
 
 // axios.interceptors.request.use(
 //   (config) => {
