@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials"
 // Your own logic for dealing with plaintext password strings; be careful!
 import { postlogin } from "./api/postlogin"
 export const { handlers, signIn, signOut, auth } = NextAuth({
+    trustHost : true ,
     providers: [
         Credentials({
             authorize: async (credentials) => {
