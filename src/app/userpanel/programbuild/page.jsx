@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation';
 import axiosapi from '@/app/lib/axios';
 import Programlist from '@/components/userpanel/programlist';
 import { useSession } from 'next-auth/react';
-import { FaPlus } from 'react-icons/fa';
-
+import SessionHeader from '@/components/sessionheader/sessionheader';
+import ExerciseSelector from '@/components/exerciseselector/exerciseselector';
 function Programbuild() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -18,7 +18,6 @@ function Programbuild() {
   const router = useRouter();
 
   useEffect(() => {
-    // Fetch sessionCount from localStorage
     const fetchSessionCount = () => {
       const formDataJSON = localStorage.getItem('LocalStorageformData');
       if (formDataJSON) {
@@ -76,6 +75,19 @@ function Programbuild() {
     setSelectedExercise(inputVisible === exerciseId ? null : exerciseId);
   };
 
+  const handleInputChange = (exerciseId, exerciseName, value) => {
+    setInputValues(prevValues => {
+      const updatedValues = [...prevValues];
+      const existingIndex = updatedValues.findIndex(item => item.exerciseId === exerciseId);
+      if (existingIndex > -1) {
+        updatedValues[existingIndex] = { exerciseId, exerciseName, sets: value };
+      } else {
+        updatedValues.push({ exerciseId, exerciseName, sets: value });
+      }
+      return updatedValues;
+    });
+  };
+
   const handleSubmit = async () => {
     const formDataJSON = localStorage.getItem('LocalStorageformData');
     const formDataToSend = JSON.parse(formDataJSON);
@@ -90,7 +102,6 @@ function Programbuild() {
 
     console.log(dataToSend);
 
-    // Add your axios post request here to send dataToSend to your server
     try {
       let token = session?.user?.token;
       const response = await axiosapi.post('/programs', dataToSend, {
@@ -102,7 +113,6 @@ function Programbuild() {
       router.push('/userpanel/program');
       if (response.status === 200) {
         console.log('Data sent successfully');
-       
       } else {
         console.error('Failed to send data:', response);
       }
@@ -111,70 +121,21 @@ function Programbuild() {
     }
   };
 
-  const handleInputChange = (exerciseId, exerciseName, value) => {
-    setInputValues(prevValues => {
-      const updatedValues = [...prevValues];
-      const existingIndex = updatedValues.findIndex(item => item.exerciseId === exerciseId);
-      if (existingIndex > -1) {
-        updatedValues[existingIndex] = { exerciseId, exerciseName, sets: value };
-      } else {
-        updatedValues.push({ exerciseId, exerciseName, sets: value });
-      }
-      return updatedValues;
-    });
-  };
-
-  const renderContent = () => {
-    if (!selectedCategory) return null;
-
-    const category = categories.find(cat => cat.id === selectedCategory.id);
-
-    if (!category) return null;
-
-    return (
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-3">
-          <ul className="text-white flex flex-col">
-            {category.exercises.map((exercise) => (
-              <li key={exercise.id} className="flex flex-col gap-2 relative">
-                <div className="flex items-center gap-2">
-                  <span className='text-lg'>{exercise.name}</span>
-                  <FaPlus
-                    className={`cursor-pointer ml-1 ${selectedExercise === exercise.id ? 'text-[#E60000]' : 'text-white'}`}
-                    onClick={() => handlePlusClick(exercise.id)}
-                    size={17}
-                  />
-                </div>
-                {inputVisible === exercise.id && (
-                  <input
-                    type="text"
-                    className="bg-white text-black w-28 h-7 text-center rounded mt-2"
-                    placeholder="تعداد ست"
-                    onChange={(e) => handleInputChange(exercise.id, exercise.name, e.target.value)}
-                  />
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="bg-[#000000] h-screen">
-      <div className="flex flex-col items-center pt-8">
-        <span className="text-[#E60000] py-6 px-3 text-lg">جلسه {sessionCount}</span>
-        <div className="border-b-2 border-gray-200 w-96"></div>
-        <span className="text-white text-sm pt-3">حرکات جلسه {sessionCount} را انتخاب کنید</span>
-      </div>
+      <SessionHeader sessionCount={sessionCount} />
       <div className="mx-10">
         <Programlist onSelect={setSelectedCategory} />
       </div>
       <div className="mt-10 px-10 w-4/5">
-        <div className="flex justify-end">
-          {renderContent()}
-        </div>
+        <ExerciseSelector
+          categories={categories}
+          selectedCategory={selectedCategory}
+          inputVisible={inputVisible}
+          selectedExercise={selectedExercise}
+          handlePlusClick={handlePlusClick}
+          handleInputChange={handleInputChange}
+        />
       </div>
       <div className='flex justify-center mt-6'>
         <button
