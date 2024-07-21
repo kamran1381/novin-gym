@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import axiosapi from '@/app/lib/axios';
 import Programlist from '@/components/userpanel/programlist';
 import { useSession } from 'next-auth/react';
@@ -14,6 +15,7 @@ function Programbuild() {
   const [inputValues, setInputValues] = useState([]);
   const [sessionCount, setSessionCount] = useState(null);
   const { data: session } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     // Fetch sessionCount from localStorage
@@ -97,9 +99,10 @@ function Programbuild() {
           "Content-Type": "application/json"
         }
       });
-
+      router.push('/userpanel/program');
       if (response.status === 200) {
         console.log('Data sent successfully');
+       
       } else {
         console.error('Failed to send data:', response);
       }
@@ -108,10 +111,15 @@ function Programbuild() {
     }
   };
 
-  const handleInputChange = (index, exerciseName, value) => {
+  const handleInputChange = (exerciseId, exerciseName, value) => {
     setInputValues(prevValues => {
       const updatedValues = [...prevValues];
-      updatedValues[index] = { exerciseName, sets: value };
+      const existingIndex = updatedValues.findIndex(item => item.exerciseId === exerciseId);
+      if (existingIndex > -1) {
+        updatedValues[existingIndex] = { exerciseId, exerciseName, sets: value };
+      } else {
+        updatedValues.push({ exerciseId, exerciseName, sets: value });
+      }
       return updatedValues;
     });
   };
@@ -127,7 +135,7 @@ function Programbuild() {
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-3">
           <ul className="text-white flex flex-col">
-            {category.exercises.map((exercise, index) => (
+            {category.exercises.map((exercise) => (
               <li key={exercise.id} className="flex flex-col gap-2 relative">
                 <div className="flex items-center gap-2">
                   <span className='text-lg'>{exercise.name}</span>
@@ -142,7 +150,7 @@ function Programbuild() {
                     type="text"
                     className="bg-white text-black w-28 h-7 text-center rounded mt-2"
                     placeholder="تعداد ست"
-                    onChange={(e) => handleInputChange(index, exercise.name, e.target.value)}
+                    onChange={(e) => handleInputChange(exercise.id, exercise.name, e.target.value)}
                   />
                 )}
               </li>

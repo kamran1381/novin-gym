@@ -82,11 +82,11 @@ function DownloadButton({ programId }) {
             });
     
             // Prepare data for the second table
-            const exerciseData = program.sets.map((set, index) => [index + 1, set.exerciseName, set.sets]);
+            const exerciseData = program.sets.map((set, index) => [set.sets ,set.exerciseName ]);
     
             // Add second table using jsPDF-AutoTable
             doc.autoTable({
-                head: [[`تعداد جلسات `, 'نام حرکت ', ` تعداد ست  `]],
+                head: [[ ' تعداد ست  ' ,'نام حرکت ', ]],
                 body: exerciseData,
                 styles: {
                     font: 'sansWeb',

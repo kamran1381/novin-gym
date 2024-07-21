@@ -32,6 +32,24 @@ function ProgramTable() {
         }
     }, [session]);
 
+    const deleteProgram = async (id) => {
+        try {
+            const token = session?.user?.token;
+
+            await axiosapi.delete(`/programs/${id}`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Accept": 'application/json',
+                }
+            });
+
+            // Remove the deleted program from the state
+            setPrograms((prevPrograms) => prevPrograms.filter(program => program.id !== id));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <div className="mx-auto overflow-x-auto shadow-md sm:rounded-lg">
             <span className="text-[#F9F9F9] text-sm block">اعمال فیلتر</span>
@@ -52,7 +70,10 @@ function ProgramTable() {
                                 <td className="px-6 py-4">{program.username}</td>
                                 <td className="px-6 py-4 text-white">{program.created_at}</td>
                                 <td className="flex items-center py-4 px-2">
-                                    <button className="bg-[#E60000] text-white font-bold rounded-full mx-2">
+                                    <button 
+                                        onClick={() => deleteProgram(program.id)} 
+                                        className="bg-[#E60000] text-white font-bold rounded-full mx-2"
+                                    >
                                         <TiDelete size={27} />
                                     </button>
                                     <DownloadButton programId={program.id} /> {/* Corrected component usage */}
