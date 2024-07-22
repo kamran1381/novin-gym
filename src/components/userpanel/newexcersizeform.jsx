@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axiosapi from '@/app/lib/axios';
 import { useSession } from 'next-auth/react';
+import Swal from 'sweetalert2';
 
 function NewExerciseForm() {
   const [options, setOptions] = useState([]);
@@ -73,6 +74,22 @@ function NewExerciseForm() {
         }
       });
       console.log('Data sent successfully:', response.data);
+
+      // Clear the form inputs
+      setFormData({
+        selectedOption: '',
+        firstInput: '',
+        secondInput: '',
+        thirdInput: null,
+      });
+
+      // Show success message
+      Swal.fire({
+        title: "<span style='font-size:1.2em'>با موفقیت ارسال شد</span>",
+        icon: 'success',
+        confirmButtonColor: '#28a745',
+        confirmButtonText: 'تایید'
+      });
     } catch (error) {
       console.error('Error sending data:', error.response ? error.response.data : error.message);
     }
@@ -119,7 +136,7 @@ function NewExerciseForm() {
         name="thirdInput"
         accept="video/mp4"
         onChange={handleFileChange}
-        className="mb-4 p-2 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg border border-gray-300 rounded"
+        className="mb-4 p-2 w-full max-w-xs sm.max-w-sm md:max-w-md lg:max-w-lg border border-gray-300 rounded"
       />
 
       <button

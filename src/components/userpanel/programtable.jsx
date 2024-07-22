@@ -5,7 +5,7 @@ import { TiDelete } from "react-icons/ti";
 import { useSession } from 'next-auth/react';
 import DownloadButton from '../downloadPdf/donwloadbutton';
 
-function ProgramTable() {
+function ProgramTable({ query }) {
     const [programs, setPrograms] = useState([]);
     const { data: session } = useSession();
 
@@ -50,6 +50,11 @@ function ProgramTable() {
         }
     };
 
+    const filteredPrograms = programs.filter(program => 
+        program.username.toLowerCase().includes(query.toLowerCase()) ||
+        program.id.toString().includes(query)
+    );
+
     return (
         <div className="mx-auto overflow-x-auto shadow-md sm:rounded-lg">
             <span className="text-[#F9F9F9] text-sm block">اعمال فیلتر</span>
@@ -64,7 +69,7 @@ function ProgramTable() {
                         </tr>
                     </thead>
                     <tbody>
-                        {programs.map((program) => (
+                        {filteredPrograms.map((program) => (
                             <tr key={program.id} className="border-b">
                                 <td className="px-6 py-4 font-medium text-white whitespace-nowrap">{program.id}</td>
                                 <td className="px-6 py-4">{program.username}</td>

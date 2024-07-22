@@ -1,9 +1,17 @@
-import React from 'react'
-import Link from 'next/link'
-import Programtable from '@/components/userpanel/programtable'
+'use client'
+import React, { useState } from 'react';
+import Link from 'next/link';
+import Programtable from '@/components/userpanel/programtable';
+
 function Program() {
+    const [query, setQuery] = useState('');
+
+    const handleSearchChange = (e) => {
+        setQuery(e.target.value);
+    };
+
     return (
-        <div className='bg-[#000000] min-h-screen  '>
+        <div className='bg-[#000000] min-h-screen'>
             <div className='flex flex-col items-center'>
                 <div className='flex mt-10 gap-8'>
                     <form method="GET" action="">
@@ -13,18 +21,29 @@ function Program() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
                             </span>
-                            <input name="episodequery" id="title" className="border-white bg-transparent outline-none border-0 w-full rounded-xl p-2" type="text" placeholder="جستجو" />
+                            <input 
+                                name="episodequery" 
+                                id="title" 
+                                className="border-white bg-transparent outline-none  text-white border-0 w-full rounded-xl p-2" 
+                                type="text" 
+                                placeholder="جستجو" 
+                                value={query}
+                                onChange={handleSearchChange}
+                            />
                         </div>
                     </form>
-                    <button type="button" className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">ساخت برنامه جدید</button>
+                    
+                    <Link href='/userpanel/newprogram'   className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm  text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 flex items-center">
+                        <span className='px-2.5'>ساخت برنامه جدید</span>
+                      </Link>
                 </div>
             </div>
             <div className='mx-4 lg:mx-40 mt-10'>
                 <span className='text-white pb-3 flex justify-center'>لیست برنامه های موجود(7)</span>
-                <Programtable />
+                <Programtable query={query} />
             </div>
         </div>
-    )
+    );
 }
 
-export default Program
+export default Program;

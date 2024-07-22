@@ -2,38 +2,44 @@
 import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import axiosapi from '@/app/lib/axios';
-
+import Swal from 'sweetalert2';
+import { useRouter } from 'next/navigation';
 function Mussleform() {
   const [muscleName, setMuscleName] = useState('');
   const { data: session } = useSession();
-
+  const router =  useRouter()
   const handleInputChange = (event) => {
     setMuscleName(event.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     try {
       let token = session?.user?.token;
-      axiosapi
-        .post('/categories', { name: muscleName }, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
-          },
-        })
-        .then((response) => {
-          console.log('Muscle name sent:', response.data);
-        })
-        .catch((error) => {
-          console.error('There was an error!', error);
-        });
+      await axiosapi.post('/categories', { name: muscleName }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      });
+      console.log('Muscle name sent');
+      // Show SweetAlert2 popup
+      Swal.fire({
+        title: "<span style='font-size:1.2em'>با موفقیت ارسال شد</span>",
+        icon: 'success',
+        confirmButtonColor: '#28a745',
+        confirmButtonText: 'تایید'
+      });
+      // Clear the input
+      setMuscleName('');
+      router.push('/userpanel/programbuild')
+
     } catch (error) {
-      console.log(error);
+      console.error('There was an error!', error);
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex mt-10 h-screen">
       <div className="w-full max-w-4xl p-4">
         <label className="text-white block">نام عضله</label>
         <input
