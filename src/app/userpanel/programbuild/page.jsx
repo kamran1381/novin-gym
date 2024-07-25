@@ -6,14 +6,15 @@ import Programlist from '@/components/userpanel/programlist';
 import { useSession } from 'next-auth/react';
 import SessionHeader from '@/components/sessionheader/sessionheader';
 import ExerciseSelector from '@/components/exerciseselector/exerciseselector';
+import Swal from 'sweetalert2';
+
 function Programbuild() {
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [sessionCategories, setSessionCategories] = useState({});
   const [categories, setCategories] = useState([]);
-  const [programs, setPrograms] = useState([]);
   const [inputVisible, setInputVisible] = useState(null);
   const [selectedExercise, setSelectedExercise] = useState(null);
-  const [inputValues, setInputValues] = useState([]);
-  const [sessionCount, setSessionCount] = useState(null);
+  const [inputValues, setInputValues] = useState({});
+  const [sessionCount, setSessionCount] = useState(1);
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -57,7 +58,7 @@ function Programbuild() {
         });
 
         if (response.status === 200) {
-          setPrograms(response.data);
+          // Handle the response if needed
         }
       } catch (error) {
         console.error('Error fetching programs:', error);
@@ -75,14 +76,17 @@ function Programbuild() {
     setSelectedExercise(inputVisible === exerciseId ? null : exerciseId);
   };
 
-  const handleInputChange = (exerciseId, exerciseName, value) => {
+  const handleInputChange = (sessionIndex, exerciseId, exerciseName, value) => {
     setInputValues(prevValues => {
-      const updatedValues = [...prevValues];
-      const existingIndex = updatedValues.findIndex(item => item.exerciseId === exerciseId);
+      const updatedValues = { ...prevValues };
+      if (!updatedValues[sessionIndex]) {
+        updatedValues[sessionIndex] = [];
+      }
+      const existingIndex = updatedValues[sessionIndex].findIndex(item => item.exerciseId === exerciseId);
       if (existingIndex > -1) {
-        updatedValues[existingIndex] = { exerciseId, exerciseName, sets: value };
+        updatedValues[sessionIndex][existingIndex] = { exerciseId, exerciseName, sets: value };
       } else {
-        updatedValues.push({ exerciseId, exerciseName, sets: value });
+        updatedValues[sessionIndex].push({ exerciseId, exerciseName, sets: value });
       }
       return updatedValues;
     });
@@ -96,7 +100,7 @@ function Programbuild() {
       username: formDataToSend.username,
       data: {
         ...formDataToSend,
-        sets: inputValues
+        sessions: inputValues
       }
     };
 
@@ -112,7 +116,13 @@ function Programbuild() {
       });
       router.push('/userpanel/program');
       if (response.status === 200) {
-        console.log('Data sent successfully');
+        Swal.fire({
+          title: "<span style='font-size:1.1em'>  برنامه با موفقیت ساخته شد</span>",
+          icon: 'success',
+          confirmButtonColor: '#28a745',
+          confirmButtonText: 'تایید'
+        });
+        router.push('/userpanel/program')
       } else {
         console.error('Failed to send data:', response);
       }
@@ -121,22 +131,51 @@ function Programbuild() {
     }
   };
 
+  const handleCategorySelect = (sessionIndex, category) => {
+    setSessionCategories(prevState => ({
+      ...prevState,
+      [sessionIndex]: category
+    }));
+  };
+
+  const renderSessions = () => {
+    const sessions = [];
+    for (let i = 1; i <= sessionCount; i++) {
+      sessions.push(
+        <div key={i}>
+          <SessionHeader sessionCount={i} />
+          <div className="mx-10">
+            <Programlist onSelect={(category) => handleCategorySelect(i, category)} />
+          </div>
+          <div className="mt-10 px-10 flex flex-wrap gap-8">
+            <div className='border-red-400 border-t-2 w-full py-3'></div>
+            {categories.map((category) => (
+              <div
+                key={category.id}
+                className={`flex flex-col gap-4 ${sessionCategories[i]?.id === category.id ? 'block' : 'hidden'}`}
+              >
+                <h2 className="text-xl font-bold text-white mb-2">{category.name}</h2>
+
+                <ExerciseSelector
+                  sessionIndex={i}
+                  category={category}
+                  inputVisible={inputVisible}
+                  selectedExercise={selectedExercise}
+                  handlePlusClick={handlePlusClick}
+                  handleInputChange={(exerciseId, exerciseName, value) => handleInputChange(i, exerciseId, exerciseName, value)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    return sessions;
+  };
+
   return (
-    <div className="bg-[#000000] h-screen">
-      <SessionHeader sessionCount={sessionCount} />
-      <div className="mx-10">
-        <Programlist onSelect={setSelectedCategory} />
-      </div>
-      <div className="mt-10 px-10 w-4/5">
-        <ExerciseSelector
-          categories={categories}
-          selectedCategory={selectedCategory}
-          inputVisible={inputVisible}
-          selectedExercise={selectedExercise}
-          handlePlusClick={handlePlusClick}
-          handleInputChange={handleInputChange}
-        />
-      </div>
+    <div className="bg-[#000000] min-h-screen">
+      {renderSessions()}
       <div className='flex justify-center mt-6'>
         <button
           className="bg-red-800 text-white font-bold py-2 px-6 rounded"

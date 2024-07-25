@@ -3,9 +3,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { FiMenu, FiX } from 'react-icons/fi';
 import Image from 'next/image';
+import { useSession, signOut } from 'next-auth/react';
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: session } = useSession();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -35,12 +37,23 @@ const Navbar = () => {
 
           {/* Buttons and Burger Menu Icon */}
           <div className="flex items-center gap-2">
-            <Link href='/login' className="bg-[#E60000] text-white font-bold py-2 px-7 rounded-3xl hidden md:block">
-              ثبت نام
-            </Link>
-            <Link href='/login' className="bg-transparent text-white font-bold py-2 px-8 rounded-3xl hidden md:block border-2 border-[#E60000]">
-              ورود
-            </Link>
+            {session ? (
+              <button
+                onClick={() => signOut()}
+                className="bg-[#E60000] text-white font-bold py-2 px-7 rounded-3xl hidden md:block"
+              >
+                خروج
+              </button>
+            ) : (
+              <>
+                <Link href='/login' className="bg-[#E60000] text-white font-bold py-2 px-7 rounded-3xl hidden md:block">
+                  ثبت نام
+                </Link>
+                <Link href='/login' className="bg-transparent text-white font-bold py-2 px-8 rounded-3xl hidden md:block border-2 border-[#E60000]">
+                  ورود
+                </Link>
+              </>
+            )}
             <button className="md:hidden text-white" onClick={toggleMenu}>
               {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
@@ -56,12 +69,23 @@ const Navbar = () => {
             <Link href="/userpanel/account" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>پروفایل</Link>
             <Link href="/about" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>درباره ما</Link>
             <Link href="/contact" className='block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700'>سوالی دارید</Link>
-            <Link href='/login' className="w-full bg-[#E60000] text-white font-bold py-2 px-4 rounded">
-              ثبت نام
-            </Link>
-            <Link href='/login' className="w-full bg-transparent border-2 border-[#E60000] text-white font-bold py-2 px-4 rounded">
-              ورود
-            </Link>
+            {session ? (
+              <button
+                onClick={() => signOut()}
+                className="w-full bg-[#E60000] text-white font-bold py-2 px-4 rounded"
+              >
+                خروج
+              </button>
+            ) : (
+              <>
+                <Link href='/login' className="w-full bg-[#E60000] text-white font-bold py-2 px-4 rounded">
+                  ثبت نام
+                </Link>
+                <Link href='/login' className="w-full bg-transparent border-2 border-[#E60000] text-white font-bold py-2 px-4 rounded">
+                  ورود
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
